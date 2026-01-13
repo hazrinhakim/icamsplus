@@ -39,7 +39,7 @@ export async function GET() {
   const ids = authUsers.map((user) => user.id);
 
   const { data: profilesData, error: profilesError } = await supabaseAdmin
-    .from<DbProfileRow>('profiles')
+    .from('profiles')
     .select('id, full_name, role, created_at')
     .in('id', ids);
 
@@ -48,7 +48,7 @@ export async function GET() {
   }
 
   const profilesMap = new Map(
-    (profilesData || []).map((profile) => [profile.id, profile])
+    ((profilesData as DbProfileRow[] | null) || []).map((profile) => [profile.id, profile])
   );
 
   const response: ApiUser[] = authUsers.map((user) => {
@@ -149,17 +149,17 @@ export async function PATCH(req: Request) {
   }
 
   const { data: profile } = await supabaseAdmin
-    .from<DbProfileRow>('profiles')
+    .from('profiles')
     .select('id, full_name, role, created_at')
     .eq('id', userId)
     .maybeSingle();
 
   return jsonResponse({
     id: user?.user?.id ?? userId,
-    fullName: profile?.full_name ?? '',
-    role: profile?.role ?? 'staff',
+    fullName: (profile as DbProfileRow | null)?.full_name ?? '',
+    role: (profile as DbProfileRow | null)?.role ?? 'staff',
     email: user?.user?.email ?? '',
-    createdAt: profile?.created_at ?? null
+    createdAt: (profile as DbProfileRow | null)?.created_at ?? null
   });
 }
 
@@ -192,3 +192,5 @@ export async function DELETE(req: Request) {
 
   return jsonResponse(null);
 }
+
+

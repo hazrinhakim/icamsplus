@@ -14,7 +14,7 @@ type DbAssetCategoryRow = {
 
 export async function getAssetCategories(): Promise<AssetCategory[]> {
   const { data, error } = await supabase
-    .from<DbAssetCategoryRow>('asset_categories')
+    .from<'asset_categories', DbAssetCategoryRow>('asset_categories')
     .select('*')
     .order('name', { ascending: true });
 
@@ -29,3 +29,6 @@ export async function getAssetCategories(): Promise<AssetCategory[]> {
     createdAt: row.created_at ?? null
   }));
 }
+
+
+

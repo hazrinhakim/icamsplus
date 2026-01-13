@@ -40,7 +40,7 @@ type DbAssetRow = {
 // Get all assets
 export async function getAssets(): Promise<Asset[]> {
   const { data, error } = await supabase
-    .from<DbAssetRow>('assets')
+    .from('assets')
     .select('*, asset_categories(name)')
     .order('created_at', { ascending: false });
 
@@ -49,13 +49,13 @@ export async function getAssets(): Promise<Asset[]> {
     throw error;
   }
 
-  return (data || []).map(mapRowToAsset);
+  return ((data as DbAssetRow[] | null) || []).map(mapRowToAsset);
 }
 
 // Get asset by ID
 export async function getAssetById(id: string): Promise<Asset | null> {
   const { data, error } = await supabase
-    .from<DbAssetRow>('assets')
+    .from('assets')
     .select('*, asset_categories(name)')
     .eq('id', id)
     .maybeSingle();
@@ -65,13 +65,13 @@ export async function getAssetById(id: string): Promise<Asset | null> {
     throw error;
   }
 
-  return data ? mapRowToAsset(data) : null;
+  return data ? mapRowToAsset(data as DbAssetRow) : null;
 }
 
 // Get asset by asset ID
 export async function getAssetByAssetId(assetNo: string): Promise<Asset | null> {
   const { data, error } = await supabase
-    .from<DbAssetRow>('assets')
+    .from('assets')
     .select('*, asset_categories(name)')
     .eq('asset_no', assetNo)
     .maybeSingle();
@@ -81,7 +81,7 @@ export async function getAssetByAssetId(assetNo: string): Promise<Asset | null> 
     throw error;
   }
 
-  return data ? mapRowToAsset(data) : null;
+  return data ? mapRowToAsset(data as DbAssetRow) : null;
 }
 
 // Create a new asset
@@ -89,7 +89,7 @@ export async function createAsset(
   asset: Omit<Asset, 'id' | 'createdAt' | 'categoryName'>
 ): Promise<Asset> {
   const { data, error } = await supabase
-    .from<DbAssetRow>('assets')
+    .from('assets')
     .insert({
       asset_no: asset.assetNo || null,
       asset_name: asset.assetName || null,
@@ -128,7 +128,7 @@ export async function createAsset(
     throw error;
   }
 
-  return mapRowToAsset(data);
+  return mapRowToAsset(data as DbAssetRow);
 }
 
 // Update an asset
@@ -165,7 +165,7 @@ export async function updateAsset(id: string, updates: Partial<Asset>): Promise<
   if (updates.qrCode !== undefined) updateData.qr_code = updates.qrCode || null;
 
   const { data, error } = await supabase
-    .from<DbAssetRow>('assets')
+    .from('assets')
     .update(updateData)
     .eq('id', id)
     .select('*, asset_categories(name)')
@@ -176,7 +176,7 @@ export async function updateAsset(id: string, updates: Partial<Asset>): Promise<
     throw error;
   }
 
-  return mapRowToAsset(data);
+  return mapRowToAsset(data as DbAssetRow);
 }
 
 // Delete an asset
@@ -228,3 +228,6 @@ function mapRowToAsset(row: DbAssetRow): Asset {
     qrCode: row.qr_code ?? null,
   };
 }
+
+
+

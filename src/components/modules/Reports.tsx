@@ -71,10 +71,7 @@ export function Reports() {
   // Maintenance History by Month
   const maintenanceByMonth = maintenanceRequests.reduce(
     (acc: { month: string; pending: number; inProgress: number; completed: number }[], request) => {
-      // Handle date parsing - could be string or Date object
-      const date = request.createdAt instanceof Date
-        ? request.createdAt
-        : new Date(request.createdAt);
+      const date = new Date(request.createdAt);
       
       // Skip invalid dates
       if (isNaN(date.getTime())) {

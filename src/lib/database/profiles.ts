@@ -16,7 +16,7 @@ type DbProfileRow = {
 
 export async function getProfileById(id: string): Promise<Profile | null> {
   const { data, error } = await supabase
-    .from<DbProfileRow>('profiles')
+    .from<'profiles', DbProfileRow>('profiles')
     .select('*')
     .eq('id', id)
     .maybeSingle();
@@ -42,7 +42,7 @@ export async function getProfilesByRoles(
   roles: Array<'admin' | 'admin_assistant' | 'staff'>
 ): Promise<Profile[]> {
   const { data, error } = await supabase
-    .from<DbProfileRow>('profiles')
+    .from<'profiles', DbProfileRow>('profiles')
     .select('*')
     .in('role', roles)
     .order('full_name', { ascending: true });
@@ -59,4 +59,7 @@ export async function getProfilesByRoles(
     createdAt: row.created_at ?? null
   }));
 }
+
+
+
 

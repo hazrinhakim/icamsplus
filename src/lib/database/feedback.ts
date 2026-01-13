@@ -19,7 +19,7 @@ type DbProfileRow = {
 // Get all feedback
 export async function getFeedback(): Promise<Feedback[]> {
   const { data, error } = await supabase
-    .from<DbFeedbackRow>('feedback')
+    .from<'feedback', DbFeedbackRow>('feedback')
     .select('*')
     .order('created_at', { ascending: false });
 
@@ -35,7 +35,7 @@ export async function getFeedback(): Promise<Feedback[]> {
 
   const ids = Array.from(new Set(rows.map((row) => row.created_by)));
   const { data: profiles, error: profileError } = await supabase
-    .from<DbProfileRow>('profiles')
+    .from<'profiles', DbProfileRow>('profiles')
     .select('id, full_name')
     .in('id', ids);
 
@@ -63,7 +63,7 @@ export async function getFeedback(): Promise<Feedback[]> {
 // Get feedback by ID
 export async function getFeedbackById(id: string): Promise<Feedback | null> {
   const { data, error } = await supabase
-    .from<DbFeedbackRow>('feedback')
+    .from<'feedback', DbFeedbackRow>('feedback')
     .select('*')
     .eq('id', id)
     .single();
@@ -77,7 +77,7 @@ export async function getFeedbackById(id: string): Promise<Feedback | null> {
   }
 
   const { data: profiles } = await supabase
-    .from<DbProfileRow>('profiles')
+    .from<'profiles', DbProfileRow>('profiles')
     .select('id, full_name')
     .eq('id', data.created_by)
     .maybeSingle();
@@ -97,7 +97,7 @@ export async function getFeedbackById(id: string): Promise<Feedback | null> {
 // Get feedback by staff ID
 export async function getFeedbackByStaffId(staffId: string): Promise<Feedback[]> {
   const { data, error } = await supabase
-    .from<DbFeedbackRow>('feedback')
+    .from<'feedback', DbFeedbackRow>('feedback')
     .select('*')
     .eq('created_by', staffId)
     .order('created_at', { ascending: false });
@@ -113,7 +113,7 @@ export async function getFeedbackByStaffId(staffId: string): Promise<Feedback[]>
   }
 
   const { data: profiles } = await supabase
-    .from<DbProfileRow>('profiles')
+    .from<'profiles', DbProfileRow>('profiles')
     .select('id, full_name')
     .in('id', rows.map((row) => row.created_by));
 
@@ -136,7 +136,7 @@ export async function getFeedbackByStaffId(staffId: string): Promise<Feedback[]>
 // Create a new feedback
 export async function createFeedback(feedback: Omit<Feedback, 'id'>): Promise<Feedback> {
   const { data, error } = await supabase
-    .from<DbFeedbackRow>('feedback')
+    .from<'feedback', DbFeedbackRow>('feedback')
     .insert({
       created_by: feedback.createdBy,
       role: feedback.role,
@@ -175,7 +175,7 @@ export async function updateFeedback(id: string, updates: Partial<Feedback>): Pr
   if (updates.email !== undefined) updateData.email = updates.email || null;
 
   const { data, error } = await supabase
-    .from<DbFeedbackRow>('feedback')
+    .from<'feedback', DbFeedbackRow>('feedback')
     .update(updateData)
     .eq('id', id)
     .select()
@@ -210,4 +210,7 @@ export async function deleteFeedback(id: string): Promise<void> {
     throw error;
   }
 }
+
+
+
 

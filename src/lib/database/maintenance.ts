@@ -23,7 +23,7 @@ type DbMaintenanceRequestRow = {
 // Get all maintenance requests
 export async function getMaintenanceRequests(): Promise<MaintenanceRequest[]> {
   const { data, error } = await supabase
-    .from<DbMaintenanceRequestRow>('maintenance_requests')
+    .from<'maintenance_requests', DbMaintenanceRequestRow>('maintenance_requests')
     .select('*, assets(asset_no, asset_name), profiles(full_name)')
     .order('created_at', { ascending: false });
 
@@ -38,7 +38,7 @@ export async function getMaintenanceRequests(): Promise<MaintenanceRequest[]> {
 // Get maintenance request by ID
 export async function getMaintenanceRequestById(id: string): Promise<MaintenanceRequest | null> {
   const { data, error } = await supabase
-    .from<DbMaintenanceRequestRow>('maintenance_requests')
+    .from<'maintenance_requests', DbMaintenanceRequestRow>('maintenance_requests')
     .select('*, assets(asset_no, asset_name), profiles(full_name)')
     .eq('id', id)
     .maybeSingle();
@@ -54,7 +54,7 @@ export async function getMaintenanceRequestById(id: string): Promise<Maintenance
 // Get maintenance requests by staff ID
 export async function getMaintenanceRequestsByStaffId(staffId: string): Promise<MaintenanceRequest[]> {
   const { data, error } = await supabase
-    .from<DbMaintenanceRequestRow>('maintenance_requests')
+    .from<'maintenance_requests', DbMaintenanceRequestRow>('maintenance_requests')
     .select('*, assets(asset_no, asset_name), profiles(full_name)')
     .eq('requested_by', staffId)
     .order('created_at', { ascending: false });
@@ -72,7 +72,7 @@ export async function createMaintenanceRequest(
   request: Omit<MaintenanceRequest, 'id'>
 ): Promise<MaintenanceRequest> {
   const { data, error } = await supabase
-    .from<DbMaintenanceRequestRow>('maintenance_requests')
+    .from<'maintenance_requests', DbMaintenanceRequestRow>('maintenance_requests')
     .insert({
       asset_id: request.assetId,
       requested_by: request.requestedBy,
@@ -108,7 +108,7 @@ export async function updateMaintenanceRequest(
   if (updates.updatedAt !== undefined) updateData.updated_at = updates.updatedAt || null;
 
   const { data, error } = await supabase
-    .from<DbMaintenanceRequestRow>('maintenance_requests')
+    .from<'maintenance_requests', DbMaintenanceRequestRow>('maintenance_requests')
     .update(updateData)
     .eq('id', id)
     .select()
@@ -151,4 +151,7 @@ function mapRowToMaintenanceRequest(row: DbMaintenanceRequestRow): MaintenanceRe
     updatedAt: row.updated_at ?? '',
   };
 }
+
+
+
 
